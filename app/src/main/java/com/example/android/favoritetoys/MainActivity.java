@@ -52,17 +52,31 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void getWifiInformation(View view){
-
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+    private static String getIpAddress(WifiInfo wifiInfo) {
+        String result;
         int ip = wifiInfo.getIpAddress();
+
+        result = String.format("%d.%d.%d.%d", (ip & 0xff), (ip >> 8 & 0xff), (ip >> 16 & 0xff),
+                (ip >> 24 & 0xff));
+
+        return result;
+    }
+
+    public void getWifiInformation(View view){
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        String ip = getIpAddress(wifiInfo);
         String macAddress = wifiInfo.getMacAddress();
+        int frequency = wifiInfo.getFrequency();
         String bssid = wifiInfo.getBSSID();
         int rssi = wifiInfo.getRssi();
         int linkspeed = wifiInfo.getLinkSpeed();
         String ssid = wifiInfo.getSSID();
         int networkId = wifiInfo.getNetworkId();
-        String info = "MacAddress "+macAddress+"\n"+"BSSID "+bssid+"\n"+"SSID "+ssid+"\n"+"Network ID "+networkId;
+        int level = wifiManager.calculateSignalLevel(wifiInfo.getRssi(),1000);
+        String info = "MacAddress "+macAddress+"\n"+"BSSID "+bssid+"\n"
+                +"SSID "+ssid+"\n"+"Network ID "+networkId + "\n IP: "+ ip
+                + "\n Frequency: "+ frequency + "\n linkspeed: "+linkspeed
+                + "\n RSSI:" +rssi + "\n signal level:" +level;
         txtWifiInfo.setText(info);
     }
 }
